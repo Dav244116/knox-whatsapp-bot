@@ -1,6 +1,8 @@
 const express = require("express");
 const axios = require("axios");
 
+const general = require("./commands/general");
+
 const app = express();
 app.use(express.json());
 
@@ -57,36 +59,29 @@ app.post("/webhook/evolution", async (req, res) => {
     const command = text.trim().toLowerCase();
 
     if (command === ".ping") {
-      await sendMessage(number, "🏓 Pong! Knox Bot is online 🚀");
+      await sendMessage(number, general.ping);
     }
 
-    if (command === ".menu") {
-      await sendMessage(
-        number,
-        `╭━━━〔 KNOX BOT 〕━━━╮
-┃
-┃ 👑 .menu
-┃ 🏓 .ping
-┃ ℹ️ .help
-┃ 👤 .owner
-┃
-╰━━━━━━━━━━━━━━━━━━╯`
-      );
+    else if (command === ".alive") {
+      await sendMessage(number, general.alive);
     }
 
-    if (command === ".help") {
-      await sendMessage(
-        number,
-        "🤖 Knox Bot Help\n\nUse .menu to see available commands."
-      );
+    else if (command === ".help") {
+      await sendMessage(number, general.help);
     }
 
-    if (command === ".owner") {
-      await sendMessage(
-        number,
-        "👑 Owner: Knox The Great"
-      );
+    else if (command === ".owner") {
+      await sendMessage(number, general.owner);
     }
+
+    else if (command === ".botinfo") {
+      await sendMessage(number, general.botinfo);
+    }
+
+    else if (command === ".menu") {
+      await sendMessage(number, general.menu);
+    }
+
   } catch (error) {
     console.error(
       "Bot error:",
