@@ -2,7 +2,7 @@ const express = require("express");
 const axios = require("axios");
 
 const general = require("./commands/general");
-
+const fun = require("./commands/fun");
 const app = express();
 app.use(express.json());
 
