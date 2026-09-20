@@ -81,7 +81,47 @@ app.post("/webhook/evolution", async (req, res) => {
     else if (command === ".menu") {
       await sendMessage(number, general.menu);
     }
+else if (command === ".joke") {
+  await sendMessage(number, fun.joke);
+}
 
+else if (command === ".fact") {
+  await sendMessage(number, fun.fact);
+}
+
+else if (command === ".quote") {
+  await sendMessage(number, fun.quote);
+}
+
+else if (command === ".8ball") {
+  await sendMessage(number, fun.eightball);
+}
+
+else if (command === ".dice") {
+  await sendMessage(
+    number,
+    `🎲 You rolled: ${Math.floor(Math.random() * 6) + 1}`
+  );
+}
+
+else if (command === ".coinflip") {
+  await sendMessage(
+    number,
+    Math.random() < 0.5 ? "🪙 Heads!" : "🪙 Tails!"
+  );
+}
+
+else if (command === ".rps") {
+  await sendMessage(number, fun.rps);
+}
+
+else if (command === ".truth") {
+  await sendMessage(number, fun.truth);
+}
+
+else if (command === ".dare") {
+  await sendMessage(number, fun.dare);
+}
   } catch (error) {
     console.error(
       "Bot error:",
