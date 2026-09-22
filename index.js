@@ -596,92 +596,89 @@ app.post(
 
     try {
 
-      const data = req.body;
+      const data = req.body || {};
 
-      console.log(
-        "Webhook received"
-      );
-
+      console.log("Webhook received");
 
       const eventData =
         data?.data ||
         data?.body?.data ||
+        data?.body ||
         data;
 
-
       const key =
-        eventData?.key || {};
+        eventData?.key ||
+        eventData?.message?.key ||
+        {};
 
-
-      const message =
-        eventData?.message || {};
-
-
-      // Ignore bot's own messages
-      if (
-        key.fromMe === true
-      ) {
-
+      // Ignore messages sent by the bot itself
+      if (key.fromMe === true) {
+        console.log("Ignoring bot's own message.");
         return;
-
       }
 
+      const message =
+        eventData?.message ||
+        eventData?.data?.message ||
+        {};
 
+      // Get the sender
       const remoteJid =
+        key.senderPn ||
         key.remoteJid ||
+        key.participant ||
         eventData?.remoteJid ||
         "";
 
-
       if (!remoteJid) {
-
-        console.log(
-          "No remoteJid found."
-        );
-
+        console.log("No sender number found.");
         return;
-
       }
 
-
-      const number =
-        remoteJid
-          .replace(
-            "@s.whatsapp.net",
-            ""
-          )
-          .replace(
-            "@g.us",
-            ""
-          );
-
+      // Clean WhatsApp number
+      const number = String(remoteJid)
+        .replace(/@s\.whatsapp\.net$/i, "")
+        .replace(/@g\.us$/i, "")
+        .replace(/@lid$/i, "")
+        .split(":")[0]
+        .replace(/\D/g, "");
 
       const text =
         getMessageText(message);
 
-
       if (!text) {
+        console.log("No text message found.");
         return;
       }
-
 
       console.log(
         `Incoming message from ${number}: ${text}`
       );
 
+      // Normalize owner number
+      const normalizedOwner =
+        String(OWNER_NUMBER)
+          .replace(/\D/g, "");
+
+      const isOwner =
+        number === normalizedOwner;
+
+      console.log(
+        `Owner check: ${isOwner}`
+      );
 
       await handleCommand(
         number,
         text
       );
 
-
     } catch (error) {
 
       console.error(
         "Webhook error:",
         error.response?.data ||
-        error.message
+        error.message ||
+        error
       );
 
     }
