@@ -1,301 +1,408 @@
-const express = require("express");
-const axios = require("axios");
-
-const { commands, categories, total } = require("./commands/commands300");
-
-const app = express();
-app.use(express.json());
-
-const PORT = process.env.PORT || 8080;
-
-const EVOLUTION_API_URL = process.env.EVOLUTION_API_URL;
-const EVOLUTION_API_KEY = process.env.EVOLUTION_API_KEY;
-const EVOLUTION_INSTANCE = process.env.EVOLUTION_INSTANCE;
-
-app.get("/", (req, res) => {
-  res.send("Knox WhatsApp Bot is running 🚀");
-});
-
-app.get("/health", (req, res) => {
-  res.json({
-    status: "ok",
-    bot: "Knox WhatsApp Bot",
-    commands: total
-  });
-});
-
-async function sendMessage(number, text) {
-  await axios.post(
-    `${EVOLUTION_API_URL}/message/sendText/${EVOLUTION_INSTANCE}`,
-    {
-      number,
-      text
-    },
-    {
-      headers: {
-        apikey: EVOLUTION_API_KEY,
-        "Content-Type": "application/json"
-      }
-    }
-  );
-}
-
-function randomItem(array) {
-  return array[Math.floor(Math.random() * array.length)];
-}
-
-function buildMenu() {
-  let menu = `╭━━━〔 👑 KNOX BOT 〕━━━╮
+╭━━━〔 👑 KNOX BOT 〕━━━╮
 ┃
-┃ ⚡ ${total} COMMANDS AVAILABLE
-┃`;
+┃ 👤 Owner : Knox The Great
+┃ 🤖 Bot   : KNOX BOT
+┃ ⚡ Prefix: .
+┃ 📚 Total : 300 Commands
+┃
+╰━━━━━━━━━━━━━━━━━━━━╯
 
-  for (const [category, list] of Object.entries(categories)) {
-    menu += `\n┃ 🔹 ${category.toUpperCase()}\n`;
+╭━━〔 GENERAL 〕━━╮
+┃ • .menu
+┃ • .help
+┃ • .ping
+┃ • .alive
+┃ • .bot
+┃ • .info
+┃ • .owner
+┃ • .uptime
+┃ • .status
+┃ • .commands
+╰━━━━━━━━━━━━━━━╯
 
-    for (const command of list) {
-      menu += `┃ • .${command}\n`;
-    }
-  }
+╭━━〔 FUN 〕━━╮
+┃ • .joke
+┃ • .meme
+┃ • .quote
+┃ • .fact
+┃ • .truth
+┃ • .dare
+┃ • .roast
+┃ • .ship
+┃ • .love
+┃ • .laugh
+╰━━━━━━━━━━━━━╯
 
-  menu += `┃
-╰━━━━━━━━━━━━━━━━━━━━╯`;
+╭━━〔 GAMES 〕━━╮
+┃ • .game
+┃ • .rps
+┃ • .dice
+┃ • .coin
+┃ • .guess
+┃ • .quiz
+┃ • .trivia
+┃ • .tictactoe
+┃ • .slot
+┃ • .8ball
+╰━━━━━━━━━━━━━━╯
 
-  return menu;
-}
+╭━━〔 ANIME 〕━━╮
+┃ • .anime
+┃ • .waifu
+┃ • .neko
+┃ • .hug
+┃ • .kiss
+┃ • .pat
+┃ • .slap
+┃ • .wink
+┃ • .dance
+┃ • .smile
+╰━━━━━━━━━━━━━━╯
 
-app.post("/webhook/evolution", async (req, res) => {
-  res.sendStatus(200);
+╭━━〔 DOWNLOADER 〕━━╮
+┃ • .ytmp3
+┃ • .ytmp4
+┃ • .play
+┃ • .song
+┃ • .video
+┃ • .tiktok
+┃ • .instagram
+┃ • .facebook
+┃ • .twitter
+┃ • .media
+╰━━━━━━━━━━━━━━━━━━╯
 
-  try {
-    const data = req.body;
+╭━━〔 SEARCH 〕━━╮
+┃ • .google
+┃ • .youtube
+┃ • .image
+┃ • .wiki
+┃ • .news
+┃ • .weather
+┃ • .lyrics
+┃ • .github
+┃ • .reddit
+┃ • .search
+╰━━━━━━━━━━━━━━━╯
 
-    const message = data?.data?.message;
-    const key = data?.data?.key;
+╭━━〔 GROUP 〕━━╮
+┃ • .add
+┃ • .kick
+┃ • .promote
+┃ • .demote
+┃ • .mute
+┃ • .unmute
+┃ • .tagall
+┃ • .hidetag
+┃ • .groupinfo
+┃ • .link
+╰━━━━━━━━━━━━━━╯
 
-    if (!message || !key) return;
+╭━━〔 ADMIN 〕━━╮
+┃ • .ban
+┃ • .unban
+┃ • .warn
+┃ • .warnings
+┃ • .resetwarn
+┃ • .antilink
+┃ • .antispam
+┃ • .welcome
+┃ • .goodbye
+┃ • .settings
+╰━━━━━━━━━━━━━━╯
 
-    // Ignore messages sent by the bot itself
-    if (key.fromMe) return;
+╭━━〔 OWNER 〕━━╮
+┃ • .broadcast
+┃ • .bc
+┃ • .eval
+┃ • .exec
+┃ • .restart
+┃ • .shutdown
+┃ • .update
+┃ • .setprefix
+┃ • .setname
+┃ • .setbio
+╰━━━━━━━━━━━━━━╯
 
-    const number = key.remoteJid?.replace("@s.whatsapp.net", "");
+╭━━〔 UTILITY 〕━━╮
+┃ • .shorturl
+┃ • .qr
+┃ • .translate
+┃ • .calc
+┃ • .time
+┃ • .date
+┃ • .count
+┃ • .readmore
+┃ • .tts
+┃ • .sticker
+╰━━━━━━━━━━━━━━╯
 
-    if (!number) return;
+╭━━〔 IMAGE 〕━━╮
+┃ • .blur
+┃ • .invert
+┃ • .greyscale
+┃ • .wanted
+┃ • .wasted
+┃ • .triggered
+┃ • .jail
+┃ • .horny
+┃ • .tweet
+┃ • .caption
+╰━━━━━━━━━━━━━━╯
 
-    const text =
-      message.conversation ||
-      message.extendedTextMessage?.text ||
-      "";
+╭━━〔 STICKER 〕━━╮
+┃ • .sticker
+┃ • .s
+┃ • .toimg
+┃ • .take
+┃ • .steal
+┃ • .emojimix
+┃ • .attp
+┃ • .ttp
+┃ • .circle
+┃ • .crop
+╰━━━━━━━━━━━━━━╯
 
-    const input = text.trim();
+╭━━〔 AI 〕━━╮
+┃ • .ai
+┃ • .chatgpt
+┃ • .ask
+┃ • .gemini
+┃ • .imagine
+┃ • .describe
+┃ • .rewrite
+┃ • .summarize
+┃ • .translateai
+┃ • .code
+╰━━━━━━━━━━━━╯
 
-    if (!input.startsWith(".")) return;
+╭━━〔 ECONOMY 〕━━╮
+┃ • .balance
+┃ • .bal
+┃ • .daily
+┃ • .weekly
+┃ • .work
+┃ • .crime
+┃ • .rob
+┃ • .deposit
+┃ • .withdraw
+┃ • .transfer
+╰━━━━━━━━━━━━━━━╯
 
-    const parts = input.split(/\s+/);
+╭━━〔 PROFILE 〕━━╮
+┃ • .profile
+┃ • .avatar
+┃ • .rank
+┃ • .level
+┃ • .xp
+┃ • .leaderboard
+┃ • .badges
+┃ • .inventory
+┃ • .rep
+┃ • .setbio
+╰━━━━━━━━━━━━━━╯
 
-    const commandName = parts[0]
-      .slice(1)
-      .toLowerCase();
+╭━━〔 MUSIC 〕━━╮
+┃ • .music
+┃ • .bass
+┃ • .nightcore
+┃ • .speed
+┃ • .slow
+┃ • .vocal
+┃ • .instrumental
+┃ • .spotify
+┃ • .soundcloud
+┃ • .radio
+╰━━━━━━━━━━━━━━╯
 
-    const args = parts.slice(1);
+╭━━〔 DEVELOPER 〕━━╮
+┃ • .github
+┃ • .npm
+┃ • .js
+┃ • .json
+┃ • .html
+┃ • .css
+┃ • .api
+┃ • .encode
+┃ • .decode
+┃ • .base64
+╰━━━━━━━━━━━━━━━━━━╯
 
-    // MENU
-    if (commandName === "menu" || commandName === "help") {
-      await sendMessage(number, buildMenu());
-      return;
-    }
+╭━━〔 TOOLS 〕━━╮
+┃ • .ip
+┃ • .domain
+┃ • .whois
+┃ • .dns
+┃ • .pinghost
+┃ • .port
+┃ • .urlscan
+┃ • .uuid
+┃ • .password
+┃ • .hash
+╰━━━━━━━━━━━━━━╯
 
-    // DICE
-    if (commandName === "dice") {
-      const roll = Math.floor(Math.random() * 6) + 1;
+╭━━〔 REACTIONS 〕━━╮
+┃ • .angry
+┃ • .happy
+┃ • .sad
+┃ • .cry
+┃ • .confused
+┃ • .excited
+┃ • .shy
+┃ • .cool
+┃ • .sleepy
+┃ • .surprised
+╰━━━━━━━━━━━━━━━━━╯
 
-      await sendMessage(
-        number,
-        `🎲 You rolled: ${roll}`
-      );
+╭━━〔 RELATIONSHIP 〕━━╮
+┃ • .ship
+┃ • .compatibility
+┃ • .couple
+┃ • .lovecheck
+┃ • .flirt
+┃ • .pickup
+┃ • .compliment
+┃ • .date
+┃ • .marry
+┃ • .breakup
+╰━━━━━━━━━━━━━━━━━━━━╯
 
-      return;
-    }
+╭━━〔 EDUCATION 〕━━╮
+┃ • .define
+┃ • .meaning
+┃ • .grammar
+┃ • .math
+┃ • .science
+┃ • .history
+┃ • .geography
+┃ • .physics
+┃ • .chemistry
+┃ • .biology
+╰━━━━━━━━━━━━━━━━━╯
 
-    // COINFLIP
-    if (commandName === "coinflip") {
-      await sendMessage(
-        number,
-        Math.random() < 0.5
-          ? "🪙 Heads!"
-          : "🪙 Tails!"
-      );
+╭━━〔 RELIGION 〕━━╮
+┃ • .bible
+┃ • .quran
+┃ • .verse
+┃ • .prayer
+┃ • .amen
+┃ • .psalm
+┃ • .hadith
+┃ • .dua
+┃ • .church
+┃ • .mosque
+╰━━━━━━━━━━━━━━━╯
 
-      return;
-    }
+╭━━〔 SPORTS 〕━━╮
+┃ • .football
+┃ • .soccer
+┃ • .score
+┃ • .fixtures
+┃ • .table
+┃ • .player
+┃ • .team
+┃ • .nba
+┃ • .ufc
+┃ • .sport
+╰━━━━━━━━━━━━━━╯
 
-    // RANDOM
-    if (commandName === "random") {
-      await sendMessage(
-        number,
-        `🎲 Random number: ${Math.floor(Math.random() * 100) + 1}`
-      );
+╭━━〔 NEWS 〕━━╮
+┃ • .headlines
+┃ • .breaking
+┃ • .technology
+┃ • .business
+┃ • .world
+┃ • .africa
+┃ • .nigeria
+┃ • .entertainment
+┃ • .politics
+┃ • .sportsnews
+╰━━━━━━━━━━━━━━╯
 
-      return;
-    }
+╭━━〔 UTILITIES 〕━━╮
+┃ • .calculator
+┃ • .convert
+┃ • .binary
+┃ • .hex
+┃ • .octal
+┃ • .random
+┃ • .choose
+┃ • .timer
+┃ • .stopwatch
+┃ • .remind
+╰━━━━━━━━━━━━━━━━━╯
 
-    // CHOOSE
-    if (commandName === "choose") {
-      if (args.length < 2) {
-        await sendMessage(
-          number,
-          "🎯 Example:\n.choose football gaming"
-        );
-        return;
-      }
+╭━━〔 WHATSAPP 〕━━╮
+┃ • .jid
+┃ • .groupid
+┃ • .chatid
+┃ • .quoted
+┃ • .mention
+┃ • .contacts
+┃ • .groups
+┃ • .read
+┃ • .seen
+┃ • .forward
+╰━━━━━━━━━━━━━━━━━╯
 
-      await sendMessage(
-        number,
-        `🎯 I choose: ${randomItem(args)}`
-      );
+╭━━〔 MODERATION 〕━━╮
+┃ • .clear
+┃ • .delete
+┃ • .purge
+┃ • .lock
+┃ • .unlock
+┃ • .slowmode
+┃ • .filter
+┃ • .antibadword
+┃ • .antitag
+┃ • .antimention
+╰━━━━━━━━━━━━━━━━━━╯
 
-      return;
-    }
+╭━━〔 CUSTOMIZATION 〕━━╮
+┃ • .setprefix
+┃ • .setwelcome
+┃ • .setgoodbye
+┃ • .setpp
+┃ • .setdesc
+┃ • .setrules
+┃ • .setmenu
+┃ • .settheme
+┃ • .setfooter
+┃ • .setbotname
+╰━━━━━━━━━━━━━━━━━━━━━╯
 
-    // NUMBER
-    if (commandName === "number") {
-      const min = Number(args[0]);
-      const max = Number(args[1]);
+╭━━〔 FUN 2 〕━━╮
+┃ • .truth2
+┃ • .dare2
+┃ • .joke2
+┃ • .roast2
+┃ • .riddle
+┃ • .fact2
+┃ • .quote2
+┃ • .story
+┃ • .randomfact
+┃ • .challenge
+╰━━━━━━━━━━━━━━╯
 
-      if (
-        !Number.isFinite(min) ||
-        !Number.isFinite(max) ||
-        min > max
-      ) {
-        await sendMessage(
-          number,
-          "🔢 Example:\n.number 1 100"
-        );
-        return;
-      }
+╭━━〔 EXTRA 〕━━╮
+┃ • .menu2
+┃ • .help2
+┃ • .about
+┃ • .support
+┃ • .donate
+┃ • .report
+┃ • .feedback
+┃ • .bug
+┃ • .request
+┃ • .version
+╰━━━━━━━━━━━━━━╯
 
-      const result =
-        Math.floor(Math.random() * (max - min + 1)) + min;
-
-      await sendMessage(
-        number,
-        `🔢 Your number is: ${result}`
-      );
-
-      return;
-    }
-
-    // SAY / REPEAT
-    if (
-      commandName === "say" ||
-      commandName === "repeat"
-    ) {
-      if (!args.length) {
-        await sendMessage(
-          number,
-          "✍️ Example:\n.say Hello everyone!"
-        );
-        return;
-      }
-
-      await sendMessage(
-        number,
-        args.join(" ")
-      );
-
-      return;
-    }
-
-    // CALCULATOR
-    if (commandName === "calc") {
-      const expression = args.join(" ");
-
-      if (
-        !expression ||
-        !/^[0-9+\-*/().%\s]+$/.test(expression)
-      ) {
-        await sendMessage(
-          number,
-          "🧮 Example:\n.calc 25*4"
-        );
-        return;
-      }
-
-      try {
-        const result = Function(
-          `"use strict"; return (${expression})`
-        )();
-
-        await sendMessage(
-          number,
-          `🧮 Answer: ${result}`
-        );
-      } catch {
-        await sendMessage(
-          number,
-          "❌ Invalid calculation."
-        );
-      }
-
-      return;
-    }
-
-    // TIME
-    if (commandName === "time") {
-      await sendMessage(
-        number,
-        `🕐 Server time: ${new Date().toLocaleTimeString()}`
-      );
-
-      return;
-    }
-
-    // DATE
-    if (commandName === "date") {
-      await sendMessage(
-        number,
-        `📅 Server date: ${new Date().toLocaleDateString()}`
-      );
-
-      return;
-    }
-
-    // ID
-    if (commandName === "id") {
-      await sendMessage(
-        number,
-        `🆔 Your WhatsApp ID:\n${number}`
-      );
-
-      return;
-    }
-
-    // UNKNOWN COMMAND
-    if (!commands[commandName]) {
-      await sendMessage(
-        number,
-        `❌ Unknown command: .${commandName}\n\nType .menu to see all ${total} commands.`
-      );
-
-      return;
-    }
-
-    // NORMAL COMMAND
-    await sendMessage(
-      number,
-      commands[commandName].response
-    );
-
-  } catch (error) {
-    console.error(
-      "Bot error:",
-      error.response?.data || error.message
-    );
-  }
-});
-
-app.listen(PORT, () => {
-  console.log(
-    `Knox Bot running on port ${PORT} with ${total} commands`
-  );
-});
+╭━━━〔 👑 KNOX BOT 〕━━━╮
+┃
+┃ 📚 30 Categories
+┃ ⚡ 300 Commands
+┃
+┃ Type .help <command>
+┃ for command details.
+┃
+╰━━━━━━━━━━━━━━━━━━━━╯
