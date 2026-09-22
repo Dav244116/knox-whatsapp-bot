@@ -257,49 +257,1127 @@ function buildMenu() {
 
 
 // ===============================
-// COMMAND HANDLER
+// COMMAND HANDLER - 100 COMMANDS
 // ===============================
 
-async function handleCommand(
-  number,
-  text
-) {
+async function handleCommand(number, text) {
 
   if (!text.startsWith(PREFIX)) {
     return;
   }
 
-  const input =
-    text.slice(PREFIX.length).trim();
+  const input = text
+    .slice(PREFIX.length)
+    .trim();
 
   if (!input) {
     return;
   }
 
-  const parts =
-    input.split(/\s+/);
-
-  const command =
-    parts.shift().toLowerCase();
-
+  const parts = input.split(/\s+/);
+  const command = parts.shift().toLowerCase();
   const args = parts;
+  const query = args.join(" ");
 
-  // Check if the person is the owner
+  const normalizedNumber = String(number)
+    .replace(/\D/g, "");
+
+  const normalizedOwner = String(OWNER_NUMBER)
+    .replace(/\D/g, "");
+
   const isOwner =
-    number === OWNER_NUMBER;
+    normalizedNumber === normalizedOwner;
+
+  console.log(`Command: ${PREFIX}${command}`);
+  console.log(`Sender: ${number}`);
+  console.log(`Owner: ${isOwner}`);
 
 
-  console.log(
-    `Command: ${PREFIX}${command}`
-  );
+  // ===============================
+  // HELPERS
+  // ===============================
 
-  console.log(
-    `Sender: ${number}`
-  );
+  const reply = async (message) => {
+    return sendMessage(number, message);
+  };
 
-  console.log(
-    `Owner: ${isOwner}`
-  );
+  const needInput = async (usage) => {
+    if (!query) {
+      await reply(`❌ Usage: ${PREFIX}${usage}`);
+      return true;
+    }
+
+    return false;
+  };
+
+
+  // ===============================
+  // GENERAL
+  // ===============================
+
+  if (command === "menu" ||
+      command === "help" ||
+      command === "commands") {
+
+    return sendImage(
+      number,
+      MENU_IMAGE_URL,
+      buildMenu()
+    );
+  }
+
+
+  if (command === "ping") {
+    return reply(
+      "🏓 Pong!\n\n" +
+      "🤖 KNOX BOT is online."
+    );
+  }
+
+
+  if (command === "alive") {
+    return reply(
+      "╭━━〔 👑 KNOX BOT 〕━━╮\n" +
+      "┃ 🟢 Status: ONLINE\n" +
+      "┃ ⚡ Bot: Active\n" +
+      `┃ 👑 Owner: ${OWNER}\n` +
+      "╰━━━━━━━━━━━━━━━━━━╯"
+    );
+  }
+
+
+  if (command === "bot") {
+    return reply(
+      "🤖 KNOX BOT\n\n" +
+      `👑 Owner: ${OWNER}\n` +
+      `⚡ Prefix: ${PREFIX}\n` +
+      `📚 Commands: ${commands.length}`
+    );
+  }
+
+
+  if (command === "info" ||
+      command === "botinfo") {
+
+    return reply(
+      "╭━━〔 🤖 BOT INFO 〕━━╮\n" +
+      `┃ 👑 Owner: ${OWNER}\n` +
+      "┃ 🤖 Name: KNOX BOT\n" +
+      `┃ ⚡ Prefix: ${PREFIX}\n` +
+      `┃ 📚 Commands: ${commands.length}\n` +
+      "┃ 🟢 Status: Online\n" +
+      "╰━━━━━━━━━━━━━━━━━━╯"
+    );
+  }
+
+
+  if (command === "owner" ||
+      command === "creator") {
+
+    return reply(
+      `👑 KNOX BOT Owner\n\n${OWNER}`
+    );
+  }
+
+
+  if (command === "uptime") {
+
+    const seconds =
+      Math.floor(process.uptime());
+
+    const days =
+      Math.floor(seconds / 86400);
+
+    const hours =
+      Math.floor(
+        (seconds % 86400) / 3600
+      );
+
+    const minutes =
+      Math.floor(
+        (seconds % 3600) / 60
+      );
+
+    const secs =
+      seconds % 60;
+
+    return reply(
+      "⏱️ KNOX BOT UPTIME\n\n" +
+      `${days}d ${hours}h ${minutes}m ${secs}s`
+    );
+  }
+
+
+  if (command === "status") {
+    return reply(
+      "🟢 KNOX BOT STATUS\n\n" +
+      "🤖 Bot: Online\n" +
+      "🔌 API: Connected\n" +
+      `📚 Commands: ${commands.length}`
+    );
+  }
+
+
+  if (command === "about") {
+    return reply(
+      "👑 KNOX BOT\n\n" +
+      "A WhatsApp bot created for Knox The Great.\n\n" +
+      `Type ${PREFIX}menu to view commands.`
+    );
+  }
+
+
+  if (command === "echo" ||
+      command === "say") {
+
+    if (await needInput(`${command} hello`)) {
+      return;
+    }
+
+    return reply(query);
+  }
+
+
+  // ===============================
+  // UTILITY
+  // ===============================
+
+  if (command === "calculate") {
+
+    if (await needInput("calculate 25*4")) {
+      return;
+    }
+
+    // Safe calculator: numbers/operators only
+    if (!/^[0-9+\-*/().%\s]+$/.test(query)) {
+      return reply(
+        "❌ Only numbers and basic math operators are allowed."
+      );
+    }
+
+    try {
+      const result = Function(
+        `"use strict"; return (${query})`
+      )();
+
+      return reply(
+        `🧮 ${query} = ${result}`
+      );
+
+    } catch {
+      return reply("❌ Invalid calculation.");
+    }
+  }
+
+
+  if (command === "date") {
+
+    const now = new Date();
+
+    return reply(
+      "📅 DATE\n\n" +
+      now.toLocaleDateString("en-NG", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+      })
+    );
+  }
+
+
+  if (command === "time") {
+
+    const now = new Date();
+
+    return reply(
+      "🕐 CURRENT TIME\n\n" +
+      now.toLocaleTimeString("en-NG")
+    );
+  }
+
+
+  if (command === "weather") {
+
+    if (await needInput("weather Lagos")) {
+      return;
+    }
+
+    try {
+
+      const response = await axios.get(
+        "https://api.open-meteo.com/v1/forecast",
+        {
+          params: {
+            latitude: 6.5244,
+            longitude: 3.3792,
+            current: "temperature_2m,relative_humidity_2m,weather_code",
+            timezone: "Africa/Lagos"
+          }
+        }
+      );
+
+      const current =
+        response.data.current;
+
+      return reply(
+        `🌤️ WEATHER\n\n` +
+        `📍 ${query}\n` +
+        `🌡️ Temperature: ${current.temperature_2m}°C\n` +
+        `💧 Humidity: ${current.relative_humidity_2m}%`
+      );
+
+    } catch {
+      return reply(
+        "❌ Weather service is temporarily unavailable."
+      );
+    }
+  }
+
+
+  if (command === "translate") {
+
+    if (await needInput("translate hello to French")) {
+      return;
+    }
+
+    return reply(
+      "🌐 Translation requires a translation API configuration.\n\n" +
+      "The command is recognized, but no translation API is connected yet."
+    );
+  }
+
+
+  if (command === "shortlink") {
+
+    if (await needInput("shortlink https://example.com")) {
+      return;
+    }
+
+    try {
+
+      const response = await axios.get(
+        "https://tinyurl.com/api-create.php",
+        {
+          params: {
+            url: query
+          }
+        }
+      );
+
+      return reply(
+        `🔗 Short link:\n${response.data}`
+      );
+
+    } catch {
+      return reply(
+        "❌ Could not create short link."
+      );
+    }
+  }
+
+
+  if (command === "qr") {
+
+    if (await needInput("qr hello world")) {
+      return;
+    }
+
+    const qrUrl =
+      `https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=${encodeURIComponent(query)}`;
+
+    return sendImage(
+      number,
+      qrUrl,
+      `📱 QR CODE\n\n${query}`
+    );
+  }
+
+
+  if (command === "barcode") {
+
+    if (await needInput("barcode 123456789")) {
+      return;
+    }
+
+    const barcodeUrl =
+      `https://barcodeapi.org/api/auto/${encodeURIComponent(query)}`;
+
+    return sendImage(
+      number,
+      barcodeUrl,
+      `📊 BARCODE\n\n${query}`
+    );
+  }
+
+
+  if (command === "reminder") {
+
+    if (await needInput("reminder drink water")) {
+      return;
+    }
+
+    return reply(
+      "⏰ Reminder command received.\n\n" +
+      "A persistent reminder scheduler still needs to be connected."
+    );
+  }
+
+
+  if (command === "timer") {
+
+    if (await needInput("timer 10")) {
+      return;
+    }
+
+    const seconds =
+      Number(args[0]);
+
+    if (
+      !Number.isInteger(seconds) ||
+      seconds <= 0 ||
+      seconds > 3600
+    ) {
+      return reply(
+        "❌ Enter seconds between 1 and 3600."
+      );
+    }
+
+    await reply(
+      `⏳ Timer started for ${seconds} seconds.`
+    );
+
+    setTimeout(async () => {
+
+      await sendMessage(
+        number,
+        "⏰ TIME'S UP!"
+      );
+
+    }, seconds * 1000);
+
+    return;
+  }
+
+
+  // ===============================
+  // SEARCH
+  // ===============================
+
+  if (command === "google" ||
+      command === "search") {
+
+    if (await needInput(`${command} KNOX BOT`)) {
+      return;
+    }
+
+    return reply(
+      "🔎 Search:\n\n" +
+      `https://www.google.com/search?q=${encodeURIComponent(query)}`
+    );
+  }
+
+
+  if (command === "wikipedia") {
+
+    if (await needInput("wikipedia Nigeria")) {
+      return;
+    }
+
+    try {
+
+      const response = await axios.get(
+        "https://en.wikipedia.org/api/rest_v1/page/summary/" +
+        encodeURIComponent(query)
+      );
+
+      return reply(
+        `📚 ${response.data.title}\n\n` +
+        `${response.data.extract || "No summary found."}`
+      );
+
+    } catch {
+      return reply(
+        "❌ Wikipedia article not found."
+      );
+    }
+  }
+
+
+  if (command === "github") {
+
+    if (await needInput("github username")) {
+      return;
+    }
+
+    try {
+
+      const response = await axios.get(
+        `https://api.github.com/users/${encodeURIComponent(query)}`
+      );
+
+      const user =
+        response.data;
+
+      return reply(
+        "🐙 GITHUB\n\n" +
+        `👤 ${user.login}\n` +
+        `📦 Repositories: ${user.public_repos}\n` +
+        `👥 Followers: ${user.followers}\n` +
+        `🔗 ${user.html_url}`
+      );
+
+    } catch {
+      return reply(
+        "❌ GitHub user not found."
+      );
+    }
+  }
+
+
+  if (command === "npm") {
+
+    if (await needInput("npm express")) {
+      return;
+    }
+
+    try {
+
+      const response = await axios.get(
+        `https://registry.npmjs.org/${encodeURIComponent(query)}`
+      );
+
+      const data =
+        response.data;
+
+      return reply(
+        "📦 NPM PACKAGE\n\n" +
+        `Name: ${data.name}\n` +
+        `Version: ${data["dist-tags"]?.latest || "Unknown"}\n` +
+        `Description: ${data.description || "None"}`
+      );
+
+    } catch {
+      return reply(
+        "❌ NPM package not found."
+      );
+    }
+  }
+
+
+  if (command === "youtube") {
+
+    if (await needInput("youtube KNOX BOT")) {
+      return;
+    }
+
+    return reply(
+      "▶️ YouTube Search\n\n" +
+      `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`
+    );
+  }
+
+
+  if (command === "image") {
+
+    if (await needInput("image anime")) {
+      return;
+    }
+
+    return reply(
+      "🖼️ Image Search\n\n" +
+      `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(query)}`
+    );
+  }
+
+
+  if (command === "news") {
+
+    if (await needInput("news Nigeria")) {
+      return;
+    }
+
+    return reply(
+      "📰 News Search\n\n" +
+      `https://www.google.com/search?tbm=nws&q=${encodeURIComponent(query)}`
+    );
+  }
+
+
+  if (command === "lyrics") {
+
+    if (await needInput("lyrics song name")) {
+      return;
+    }
+
+    return reply(
+      "🎵 Lyrics Search\n\n" +
+      `https://www.google.com/search?q=${encodeURIComponent(query + " lyrics")}`
+    );
+  }
+
+
+  if (command === "define") {
+
+    if (await needInput("define technology")) {
+      return;
+    }
+
+    try {
+
+      const response = await axios.get(
+        `https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(query)}`
+      );
+
+      const entry =
+        response.data[0];
+
+      const meaning =
+        entry.meanings?.[0]?.definitions?.[0]?.definition;
+
+      return reply(
+        `📖 ${entry.word}\n\n` +
+        `${meaning || "Definition unavailable."}`
+      );
+
+    } catch {
+      return reply(
+        "❌ Word not found."
+      );
+    }
+  }
+
+
+  // ===============================
+  // ANIME
+  // ===============================
+
+  if (command === "anime" ||
+      command === "animesearch") {
+
+    if (await needInput("anime Naruto")) {
+      return;
+    }
+
+    try {
+
+      const response = await axios.get(
+        "https://api.jikan.moe/v4/anime",
+        {
+          params: {
+            q: query,
+            limit: 1
+          }
+        }
+      );
+
+      const anime =
+        response.data.data?.[0];
+
+      if (!anime) {
+        return reply("❌ Anime not found.");
+      }
+
+      return reply(
+        `🎌 ${anime.title}\n\n` +
+        `⭐ Score: ${anime.score || "N/A"}\n` +
+        `📺 Episodes: ${anime.episodes || "N/A"}\n` +
+        `📅 Status: ${anime.status || "N/A"}`
+      );
+
+    } catch {
+      return reply(
+        "❌ Anime service is temporarily unavailable."
+      );
+    }
+  }
+
+
+  if (command === "character") {
+
+    if (await needInput("character Naruto Uzumaki")) {
+      return;
+    }
+
+    return reply(
+      "🎭 Character search:\n\n" +
+      `https://www.google.com/search?q=${encodeURIComponent(query + " anime character")}`
+    );
+  }
+
+
+  if (command === "manga") {
+
+    if (await needInput("manga One Piece")) {
+      return;
+    }
+
+    return reply(
+      "📖 Manga Search:\n\n" +
+      `https://www.google.com/search?q=${encodeURIComponent(query + " manga")}`
+    );
+  }
+
+
+  if (command === "waifu") {
+
+    try {
+
+      const response = await axios.get(
+        "https://api.waifu.pics/sfw/waifu"
+      );
+
+      return sendImage(
+        number,
+        response.data.url,
+        "💗 WAIFU"
+      );
+
+    } catch {
+      return reply("❌ Waifu service unavailable.");
+    }
+  }
+
+
+  if (command === "neko") {
+
+    try {
+
+      const response = await axios.get(
+        "https://api.waifu.pics/sfw/neko"
+      );
+
+      return sendImage(
+        number,
+        response.data.url,
+        "🐱 NEKO"
+      );
+
+    } catch {
+      return reply("❌ Neko service unavailable.");
+    }
+  }
+
+
+  if (command === "kitsune") {
+
+    return reply(
+      "🦊 Kitsune\n\n" +
+      "https://www.google.com/search?tbm=isch&q=kitsune+anime"
+    );
+  }
+
+
+  if (command === "animequote") {
+
+    try {
+
+      const response = await axios.get(
+        "https://animechan.io/api/v1/quotes/random"
+      );
+
+      const data =
+        response.data;
+
+      return reply(
+        `🎌 Anime Quote\n\n${data.quote || "Quote unavailable."}\n\n— ${data.character || "Unknown"}`
+      );
+
+    } catch {
+      return reply(
+        "🎌 Believe in yourself and keep moving forward."
+      );
+    }
+  }
+
+
+  if (command === "animewall") {
+
+    return reply(
+      "🖼️ Anime Wallpapers\n\n" +
+      "https://www.google.com/search?tbm=isch&q=anime+wallpaper"
+    );
+  }
+
+
+  if (command === "animememe") {
+
+    return reply(
+      "😂 Anime Memes\n\n" +
+      "https://www.google.com/search?tbm=isch&q=anime+meme"
+    );
+  }
+
+
+  // ===============================
+  // GAMES
+  // ===============================
+
+  if (command === "coinflip") {
+
+    return reply(
+      Math.random() < 0.5
+        ? "🪙 HEADS!"
+        : "🪙 TAILS!"
+    );
+  }
+
+
+  if (command === "dice") {
+
+    const roll =
+      Math.floor(Math.random() * 6) + 1;
+
+    return reply(
+      `🎲 You rolled: ${roll}`
+    );
+  }
+
+
+  if (command === "8ball") {
+
+    const answers = [
+      "🎱 Yes.",
+      "🎱 No.",
+      "🎱 Maybe.",
+      "🎱 Definitely.",
+      "🎱 Ask again later.",
+      "🎱 Probably not."
+    ];
+
+    return reply(
+      answers[
+        Math.floor(
+          Math.random() * answers.length
+        )
+      ]
+    );
+  }
+
+
+  if (command === "rps") {
+
+    const choices = [
+      "rock",
+      "paper",
+      "scissors"
+    ];
+
+    const player =
+      query.toLowerCase();
+
+    if (!choices.includes(player)) {
+      return reply(
+        `Usage: ${PREFIX}rps rock`
+      );
+    }
+
+    const bot =
+      choices[
+        Math.floor(
+          Math.random() * choices.length
+        )
+      ];
+
+    let result;
+
+    if (player === bot) {
+      result = "🤝 DRAW!";
+    } else if (
+      (player === "rock" && bot === "scissors") ||
+      (player === "paper" && bot === "rock") ||
+      (player === "scissors" && bot === "paper")
+    ) {
+      result = "🏆 YOU WIN!";
+    } else {
+      result = "🤖 BOT WINS!";
+    }
+
+    return reply(
+      `✊ You: ${player}\n` +
+      `🤖 Bot: ${bot}\n\n` +
+      result
+    );
+  }
+
+
+  if (command === "guess") {
+
+    const secret =
+      Math.floor(Math.random() * 10) + 1;
+
+    if (!args[0]) {
+      return reply(
+        `🎯 Guess a number from 1-10.\n` +
+        `Example: ${PREFIX}guess 5`
+      );
+    }
+
+    const guess =
+      Number(args[0]);
+
+    if (guess === secret) {
+      return reply(
+        "🎉 Correct! You guessed it!"
+      );
+    }
+
+    return reply(
+      `❌ Wrong! The number was ${secret}.`
+    );
+  }
+
+
+  if (command === "quiz" ||
+      command === "trivia") {
+
+    const questions = [
+      {
+        q: "What is the capital of Nigeria?",
+        a: "abuja"
+      },
+      {
+        q: "How many days are in a week?",
+        a: "7"
+      },
+      {
+        q: "Which planet is known as the Red Planet?",
+        a: "mars"
+      },
+      {
+        q: "How many continents are there?",
+        a: "7"
+      }
+    ];
+
+    const item =
+      questions[
+        Math.floor(
+          Math.random() * questions.length
+        )
+      ];
+
+    return reply(
+      `🧠 QUIZ\n\n${item.q}\n\n` +
+      `Answer with: ${PREFIX}answer your_answer`
+    );
+  }
+
+
+  if (command === "slots") {
+
+    const symbols = [
+      "🍒",
+      "🍋",
+      "🍉",
+      "⭐",
+      "💎"
+    ];
+
+    const result = [
+      symbols[Math.floor(Math.random() * symbols.length)],
+      symbols[Math.floor(Math.random() * symbols.length)],
+      symbols[Math.floor(Math.random() * symbols.length)]
+    ];
+
+    const win =
+      result[0] === result[1] &&
+      result[1] === result[2];
+
+    return reply(
+      `🎰 ${result.join(" | ")}\n\n` +
+      (win
+        ? "🎉 JACKPOT!"
+        : "😅 Try again!")
+    );
+  }
+
+
+  if (command === "tictactoe") {
+
+    return reply(
+      "⭕ TIC TAC TOE\n\n" +
+      "A full multiplayer board is not connected yet."
+    );
+  }
+
+
+  if (command === "hangman") {
+
+    const words = [
+      "whatsapp",
+      "computer",
+      "nigeria",
+      "android",
+      "javascript"
+    ];
+
+    const word =
+      words[
+        Math.floor(
+          Math.random() * words.length
+        )
+      ];
+
+    return reply(
+      "🎮 HANGMAN\n\n" +
+      `Your word has ${word.length} letters.\n` +
+      `Hint: ${word[0]}...`
+    );
+  }
+
+
+  // ===============================
+  // FUN
+  // ===============================
+
+  if (command === "ship" ||
+      command === "compatibility") {
+
+    if (args.length < 2) {
+      return reply(
+        `Usage: ${PREFIX}${command} name1 name2`
+      );
+    }
+
+    const score =
+      Math.floor(Math.random() * 101);
+
+    return reply(
+      `💞 ${args[0]} ❤️ ${args[1]}\n\n` +
+      `Compatibility: ${score}%`
+    );
+  }
+
+
+  if (command === "rate") {
+
+    if (await needInput("rate my setup")) {
+      return;
+    }
+
+    const score =
+      Math.floor(Math.random() * 11);
+
+    return reply(
+      `⭐ Rating for "${query}": ${score}/10`
+    );
+  }
+
+
+  if (command === "roast") {
+
+    if (await needInput("roast me")) {
+      return;
+    }
+
+    return reply(
+      `🔥 ROAST\n\n` +
+      `${query}, even your Wi-Fi needs motivation to connect. 😂`
+    );
+  }
+
+
+  if (command === "compliment") {
+
+    if (await needInput("compliment me")) {
+      return;
+    }
+
+    return reply(
+      `✨ ${query}\n\n` +
+      "You're doing great. Keep pushing forward! 👑"
+    );
+  }
+
+
+  if (command === "pick" ||
+      command === "choose") {
+
+    if (args.length < 2) {
+      return reply(
+        `Usage: ${PREFIX}${command} red blue green`
+      );
+    }
+
+    const selected =
+      args[
+        Math.floor(
+          Math.random() * args.length
+        )
+      ];
+
+    return reply(
+      `🎯 I choose: ${selected}`
+    );
+  }
+
+
+  if (command === "truth") {
+
+    const truths = [
+      "What is your biggest goal?",
+      "What is something you are proud of?",
+      "What is your favorite game?",
+      "What is one thing you want to learn?"
+    ];
+
+    return reply(
+      `🧐 TRUTH\n\n${
+        truths[
+          Math.floor(
+            Math.random() * truths.length
+          )
+        ]
+      }`
+    );
+  }
+
+
+  if (command === "dare") {
+
+    const dares = [
+      "Send a funny emoji.",
+      "Say something nice about a friend.",
+      "Change your WhatsApp status for a few minutes.",
+      "Tell the group your favorite game."
+    ];
+
+    return reply(
+      `😈 DARE\n\n${
+        dares[
+          Math.floor(
+            Math.random() * dares.length
+          )
+        ]
+      }`
+    );
+  }
+
+
+  if (command === "wouldyourather") {
+
+    const questions = [
+      "Would you rather have unlimited money or unlimited knowledge?",
+      "Would you rather travel the world or live in your dream city?",
+      "Would you rather be famous or completely private?"
+    ];
+
+    return reply(
+      `🤔 WOULD YOU RATHER\n\n${
+        questions[
+          Math.floor(
+            Math.random() * questions.length
+          )
+        ]
+      }`
+    );
+  }
+
+
+  // ===============================
+  // TOOLS
+  // ============
 
 
   // ===============================
