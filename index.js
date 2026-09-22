@@ -1,408 +1,298 @@
-╭━━━〔 👑 KNOX BOT 〕━━━╮
-┃
-┃ 👤 Owner : Knox The Great
-┃ 🤖 Bot   : KNOX BOT
-┃ ⚡ Prefix: .
-┃ 📚 Total : 300 Commands
-┃
-╰━━━━━━━━━━━━━━━━━━━━╯
+const express = require("express");
+const axios = require("axios");
+const { categories, commands } = require("./Commands300");
 
-╭━━〔 GENERAL 〕━━╮
-┃ • .menu
-┃ • .help
-┃ • .ping
-┃ • .alive
-┃ • .bot
-┃ • .info
-┃ • .owner
-┃ • .uptime
-┃ • .status
-┃ • .commands
-╰━━━━━━━━━━━━━━━╯
+const app = express();
+app.use(express.json());
 
-╭━━〔 FUN 〕━━╮
-┃ • .joke
-┃ • .meme
-┃ • .quote
-┃ • .fact
-┃ • .truth
-┃ • .dare
-┃ • .roast
-┃ • .ship
-┃ • .love
-┃ • .laugh
-╰━━━━━━━━━━━━━╯
+const PORT = process.env.PORT || 8080;
+const PREFIX = process.env.BOT_PREFIX || ".";
+const OWNER = process.env.BOT_OWNER || "Knox The Great";
 
-╭━━〔 GAMES 〕━━╮
-┃ • .game
-┃ • .rps
-┃ • .dice
-┃ • .coin
-┃ • .guess
-┃ • .quiz
-┃ • .trivia
-┃ • .tictactoe
-┃ • .slot
-┃ • .8ball
-╰━━━━━━━━━━━━━━╯
+const EVOLUTION_API_URL = process.env.EVOLUTION_API_URL;
+const EVOLUTION_API_KEY = process.env.EVOLUTION_API_KEY;
+const EVOLUTION_INSTANCE = process.env.EVOLUTION_INSTANCE;
 
-╭━━〔 ANIME 〕━━╮
-┃ • .anime
-┃ • .waifu
-┃ • .neko
-┃ • .hug
-┃ • .kiss
-┃ • .pat
-┃ • .slap
-┃ • .wink
-┃ • .dance
-┃ • .smile
-╰━━━━━━━━━━━━━━╯
+// ===============================
+// HOME
+// ===============================
 
-╭━━〔 DOWNLOADER 〕━━╮
-┃ • .ytmp3
-┃ • .ytmp4
-┃ • .play
-┃ • .song
-┃ • .video
-┃ • .tiktok
-┃ • .instagram
-┃ • .facebook
-┃ • .twitter
-┃ • .media
-╰━━━━━━━━━━━━━━━━━━╯
+app.get("/", (req, res) => {
+  res.send("Knox WhatsApp Bot is running 🚀");
+});
 
-╭━━〔 SEARCH 〕━━╮
-┃ • .google
-┃ • .youtube
-┃ • .image
-┃ • .wiki
-┃ • .news
-┃ • .weather
-┃ • .lyrics
-┃ • .github
-┃ • .reddit
-┃ • .search
-╰━━━━━━━━━━━━━━━╯
+// ===============================
+// HEALTH CHECK
+// ===============================
 
-╭━━〔 GROUP 〕━━╮
-┃ • .add
-┃ • .kick
-┃ • .promote
-┃ • .demote
-┃ • .mute
-┃ • .unmute
-┃ • .tagall
-┃ • .hidetag
-┃ • .groupinfo
-┃ • .link
-╰━━━━━━━━━━━━━━╯
+app.get("/health", (req, res) => {
+  res.json({
+    status: "ok",
+    bot: "KNOX BOT",
+    owner: OWNER,
+    commands: commands.length,
+    uptime: Math.floor(process.uptime())
+  });
+});
 
-╭━━〔 ADMIN 〕━━╮
-┃ • .ban
-┃ • .unban
-┃ • .warn
-┃ • .warnings
-┃ • .resetwarn
-┃ • .antilink
-┃ • .antispam
-┃ • .welcome
-┃ • .goodbye
-┃ • .settings
-╰━━━━━━━━━━━━━━╯
+// ===============================
+// SEND WHATSAPP MESSAGE
+// ===============================
 
-╭━━〔 OWNER 〕━━╮
-┃ • .broadcast
-┃ • .bc
-┃ • .eval
-┃ • .exec
-┃ • .restart
-┃ • .shutdown
-┃ • .update
-┃ • .setprefix
-┃ • .setname
-┃ • .setbio
-╰━━━━━━━━━━━━━━╯
+async function sendMessage(number, text) {
+  if (!EVOLUTION_API_URL || !EVOLUTION_API_KEY || !EVOLUTION_INSTANCE) {
+    console.error("Evolution API environment variables are missing.");
+    return;
+  }
 
-╭━━〔 UTILITY 〕━━╮
-┃ • .shorturl
-┃ • .qr
-┃ • .translate
-┃ • .calc
-┃ • .time
-┃ • .date
-┃ • .count
-┃ • .readmore
-┃ • .tts
-┃ • .sticker
-╰━━━━━━━━━━━━━━╯
+  const url =
+    `${EVOLUTION_API_URL}/message/sendText/${EVOLUTION_INSTANCE}`;
 
-╭━━〔 IMAGE 〕━━╮
-┃ • .blur
-┃ • .invert
-┃ • .greyscale
-┃ • .wanted
-┃ • .wasted
-┃ • .triggered
-┃ • .jail
-┃ • .horny
-┃ • .tweet
-┃ • .caption
-╰━━━━━━━━━━━━━━╯
+  try {
+    await axios.post(
+      url,
+      {
+        number: number,
+        text: text
+      },
+      {
+        headers: {
+          apikey: EVOLUTION_API_KEY,
+          "Content-Type": "application/json"
+        }
+      }
+    );
 
-╭━━〔 STICKER 〕━━╮
-┃ • .sticker
-┃ • .s
-┃ • .toimg
-┃ • .take
-┃ • .steal
-┃ • .emojimix
-┃ • .attp
-┃ • .ttp
-┃ • .circle
-┃ • .crop
-╰━━━━━━━━━━━━━━╯
+    console.log(`Message sent to ${number}`);
+  } catch (error) {
+    console.error(
+      "Send message error:",
+      error.response?.data || error.message
+    );
+  }
+}
 
-╭━━〔 AI 〕━━╮
-┃ • .ai
-┃ • .chatgpt
-┃ • .ask
-┃ • .gemini
-┃ • .imagine
-┃ • .describe
-┃ • .rewrite
-┃ • .summarize
-┃ • .translateai
-┃ • .code
-╰━━━━━━━━━━━━╯
+// ===============================
+// GET MESSAGE TEXT
+// ===============================
 
-╭━━〔 ECONOMY 〕━━╮
-┃ • .balance
-┃ • .bal
-┃ • .daily
-┃ • .weekly
-┃ • .work
-┃ • .crime
-┃ • .rob
-┃ • .deposit
-┃ • .withdraw
-┃ • .transfer
-╰━━━━━━━━━━━━━━━╯
+function getMessageText(message) {
+  if (!message) return "";
 
-╭━━〔 PROFILE 〕━━╮
-┃ • .profile
-┃ • .avatar
-┃ • .rank
-┃ • .level
-┃ • .xp
-┃ • .leaderboard
-┃ • .badges
-┃ • .inventory
-┃ • .rep
-┃ • .setbio
-╰━━━━━━━━━━━━━━╯
+  return (
+    message.conversation ||
+    message.extendedTextMessage?.text ||
+    message.imageMessage?.caption ||
+    message.videoMessage?.caption ||
+    message.documentMessage?.caption ||
+    ""
+  ).trim();
+}
 
-╭━━〔 MUSIC 〕━━╮
-┃ • .music
-┃ • .bass
-┃ • .nightcore
-┃ • .speed
-┃ • .slow
-┃ • .vocal
-┃ • .instrumental
-┃ • .spotify
-┃ • .soundcloud
-┃ • .radio
-╰━━━━━━━━━━━━━━╯
+// ===============================
+// BUILD MENU
+// ===============================
 
-╭━━〔 DEVELOPER 〕━━╮
-┃ • .github
-┃ • .npm
-┃ • .js
-┃ • .json
-┃ • .html
-┃ • .css
-┃ • .api
-┃ • .encode
-┃ • .decode
-┃ • .base64
-╰━━━━━━━━━━━━━━━━━━╯
+function buildMenu() {
+  let menu = "";
 
-╭━━〔 TOOLS 〕━━╮
-┃ • .ip
-┃ • .domain
-┃ • .whois
-┃ • .dns
-┃ • .pinghost
-┃ • .port
-┃ • .urlscan
-┃ • .uuid
-┃ • .password
-┃ • .hash
-╰━━━━━━━━━━━━━━╯
+  menu += "╭━━━〔 👑 KNOX BOT 〕━━━╮\n";
+  menu += "┃\n";
+  menu += `┃ 👤 Owner : ${OWNER}\n`;
+  menu += "┃ 🤖 Bot   : KNOX BOT\n";
+  menu += `┃ ⚡ Prefix: ${PREFIX}\n`;
+  menu += `┃ 📚 Total : ${commands.length} Commands\n`;
+  menu += "┃\n";
+  menu += "╰━━━━━━━━━━━━━━━━━━━━╯\n\n";
 
-╭━━〔 REACTIONS 〕━━╮
-┃ • .angry
-┃ • .happy
-┃ • .sad
-┃ • .cry
-┃ • .confused
-┃ • .excited
-┃ • .shy
-┃ • .cool
-┃ • .sleepy
-┃ • .surprised
-╰━━━━━━━━━━━━━━━━━╯
+  for (const [category, list] of Object.entries(categories)) {
+    menu += `╭━━〔 ${category.toUpperCase()} 〕━━╮\n`;
 
-╭━━〔 RELATIONSHIP 〕━━╮
-┃ • .ship
-┃ • .compatibility
-┃ • .couple
-┃ • .lovecheck
-┃ • .flirt
-┃ • .pickup
-┃ • .compliment
-┃ • .date
-┃ • .marry
-┃ • .breakup
-╰━━━━━━━━━━━━━━━━━━━━╯
+    for (const command of list) {
+      menu += `┃ ${PREFIX}${command}\n`;
+    }
 
-╭━━〔 EDUCATION 〕━━╮
-┃ • .define
-┃ • .meaning
-┃ • .grammar
-┃ • .math
-┃ • .science
-┃ • .history
-┃ • .geography
-┃ • .physics
-┃ • .chemistry
-┃ • .biology
-╰━━━━━━━━━━━━━━━━━╯
+    menu += "╰━━━━━━━━━━━━━━━━━━━━╯\n\n";
+  }
 
-╭━━〔 RELIGION 〕━━╮
-┃ • .bible
-┃ • .quran
-┃ • .verse
-┃ • .prayer
-┃ • .amen
-┃ • .psalm
-┃ • .hadith
-┃ • .dua
-┃ • .church
-┃ • .mosque
-╰━━━━━━━━━━━━━━━╯
+  return menu.trim();
+}
 
-╭━━〔 SPORTS 〕━━╮
-┃ • .football
-┃ • .soccer
-┃ • .score
-┃ • .fixtures
-┃ • .table
-┃ • .player
-┃ • .team
-┃ • .nba
-┃ • .ufc
-┃ • .sport
-╰━━━━━━━━━━━━━━╯
+// ===============================
+// COMMAND HANDLER
+// ===============================
 
-╭━━〔 NEWS 〕━━╮
-┃ • .headlines
-┃ • .breaking
-┃ • .technology
-┃ • .business
-┃ • .world
-┃ • .africa
-┃ • .nigeria
-┃ • .entertainment
-┃ • .politics
-┃ • .sportsnews
-╰━━━━━━━━━━━━━━╯
+async function handleCommand(number, text) {
+  if (!text.startsWith(PREFIX)) return;
 
-╭━━〔 UTILITIES 〕━━╮
-┃ • .calculator
-┃ • .convert
-┃ • .binary
-┃ • .hex
-┃ • .octal
-┃ • .random
-┃ • .choose
-┃ • .timer
-┃ • .stopwatch
-┃ • .remind
-╰━━━━━━━━━━━━━━━━━╯
+  const input = text.slice(PREFIX.length).trim();
 
-╭━━〔 WHATSAPP 〕━━╮
-┃ • .jid
-┃ • .groupid
-┃ • .chatid
-┃ • .quoted
-┃ • .mention
-┃ • .contacts
-┃ • .groups
-┃ • .read
-┃ • .seen
-┃ • .forward
-╰━━━━━━━━━━━━━━━━━╯
+  if (!input) return;
 
-╭━━〔 MODERATION 〕━━╮
-┃ • .clear
-┃ • .delete
-┃ • .purge
-┃ • .lock
-┃ • .unlock
-┃ • .slowmode
-┃ • .filter
-┃ • .antibadword
-┃ • .antitag
-┃ • .antimention
-╰━━━━━━━━━━━━━━━━━━╯
+  const parts = input.split(/\s+/);
+  const command = parts.shift().toLowerCase();
+  const args = parts;
 
-╭━━〔 CUSTOMIZATION 〕━━╮
-┃ • .setprefix
-┃ • .setwelcome
-┃ • .setgoodbye
-┃ • .setpp
-┃ • .setdesc
-┃ • .setrules
-┃ • .setmenu
-┃ • .settheme
-┃ • .setfooter
-┃ • .setbotname
-╰━━━━━━━━━━━━━━━━━━━━━╯
+  console.log(`Command: ${PREFIX}${command}`);
 
-╭━━〔 FUN 2 〕━━╮
-┃ • .truth2
-┃ • .dare2
-┃ • .joke2
-┃ • .roast2
-┃ • .riddle
-┃ • .fact2
-┃ • .quote2
-┃ • .story
-┃ • .randomfact
-┃ • .challenge
-╰━━━━━━━━━━━━━━╯
+  switch (command) {
+    case "menu":
+    case "help":
+    case "commands":
+      return sendMessage(number, buildMenu());
 
-╭━━〔 EXTRA 〕━━╮
-┃ • .menu2
-┃ • .help2
-┃ • .about
-┃ • .support
-┃ • .donate
-┃ • .report
-┃ • .feedback
-┃ • .bug
-┃ • .request
-┃ • .version
-╰━━━━━━━━━━━━━━╯
+    case "ping":
+      return sendMessage(number, "🏓 Pong!\n\nKNOX BOT is online.");
 
-╭━━━〔 👑 KNOX BOT 〕━━━╮
-┃
-┃ 📚 30 Categories
-┃ ⚡ 300 Commands
-┃
-┃ Type .help <command>
-┃ for command details.
-┃
-╰━━━━━━━━━━━━━━━━━━━━╯
+    case "alive":
+      return sendMessage(
+        number,
+        "╭━━〔 👑 KNOX BOT 〕━━╮\n" +
+        "┃ 🟢 Status: ONLINE\n" +
+        "┃ ⚡ Bot: Active\n" +
+        "┃ 👤 Owner: Knox The Great\n" +
+        "╰━━━━━━━━━━━━━━━━━━╯"
+      );
+
+    case "bot":
+      return sendMessage(
+        number,
+        "🤖 KNOX BOT\n\n" +
+        `👑 Owner: ${OWNER}\n` +
+        "⚡ Powered by Evolution API\n" +
+        `📚 Commands: ${commands.length}`
+      );
+
+    case "owner":
+    case "creator":
+      return sendMessage(number, `👑 Owner: ${OWNER}`);
+
+    case "info":
+    case "botinfo":
+      return sendMessage(
+        number,
+        "╭━━〔 🤖 BOT INFO 〕━━╮\n" +
+        `┃ 👑 Owner: ${OWNER}\n` +
+        "┃ 🤖 Name: KNOX BOT\n" +
+        `┃ ⚡ Prefix: ${PREFIX}\n` +
+        `┃ 📚 Commands: ${commands.length}\n` +
+        "┃ 🟢 Status: Online\n" +
+        "╰━━━━━━━━━━━━━━━━━━╯"
+      );
+
+    case "uptime": {
+      const seconds = Math.floor(process.uptime());
+
+      const days = Math.floor(seconds / 86400);
+      const hours = Math.floor((seconds % 86400) / 3600);
+      const minutes = Math.floor((seconds % 3600) / 60);
+      const secs = seconds % 60;
+
+      return sendMessage(
+        number,
+        `⏱️ KNOX BOT Uptime\n\n${days}d ${hours}h ${minutes}m ${secs}s`
+      );
+    }
+
+    case "status":
+      return sendMessage(
+        number,
+        "🟢 KNOX BOT STATUS\n\n" +
+        "Bot: Online\n" +
+        "API: Connected\n" +
+        `Commands: ${commands.length}`
+      );
+
+    case "about":
+      return sendMessage(
+        number,
+        "👑 KNOX BOT\n\n" +
+        "A WhatsApp bot created for Knox The Great.\n\n" +
+        "Type .menu to view the commands."
+      );
+
+    case "echo":
+    case "say":
+      if (!args.length) {
+        return sendMessage(number, `Usage: ${PREFIX}${command} hello`);
+      }
+
+      return sendMessage(number, args.join(" "));
+
+    default:
+      return sendMessage(
+        number,
+        `❌ Unknown command: ${PREFIX}${command}\n\n` +
+        `Type ${PREFIX}menu to see available commands.`
+      );
+  }
+}
+
+// ===============================
+// EVOLUTION API WEBHOOK
+// ===============================
+
+app.post("/webhook/evolution", async (req, res) => {
+  // Respond immediately so Evolution API does not retry.
+  res.sendStatus(200);
+
+  try {
+    const data = req.body;
+
+    console.log("Webhook received");
+
+    const eventData = data?.data || data?.body?.data || data;
+
+    const key = eventData?.key || {};
+    const message = eventData?.message || {};
+
+    // Ignore messages sent by the bot itself.
+    if (key.fromMe === true) {
+      return;
+    }
+
+    const remoteJid =
+      key.remoteJid ||
+      eventData?.remoteJid ||
+      "";
+
+    if (!remoteJid) {
+      console.log("No remoteJid found.");
+      return;
+    }
+
+    // Remove WhatsApp suffix.
+    const number = remoteJid
+      .replace("@s.whatsapp.net", "")
+      .replace("@g.us", "");
+
+    const text = getMessageText(message);
+
+    if (!text) {
+      return;
+    }
+
+    console.log(`Incoming message from ${number}: ${text}`);
+
+    await handleCommand(number, text);
+
+  } catch (error) {
+    console.error(
+      "Webhook error:",
+      error.response?.data || error.message
+    );
+  }
+});
+
+// ===============================
+// START SERVER
+// ===============================
+
+app.listen(PORT, () => {
+  console.log("╭━━━━━━━━━━━━━━━━━━━━━━━━━━╮");
+  console.log("┃      👑 KNOX BOT         ┃");
+  console.log("╰━━━━━━━━━━━━━━━━━━━━━━━━━━╯");
+  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`📚 Commands loaded: ${commands.length}`);
+  console.log(`⚡ Prefix: ${PREFIX}`);
+});
