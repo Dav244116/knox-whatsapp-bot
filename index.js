@@ -1,4 +1,4 @@
-const express = require("express");
+const express = require("express"); 
 const axios = require("axios");
 const { categories, commands } = require("./Commands300");
 
@@ -611,18 +611,28 @@ app.post(
         eventData?.message?.key ||
         {};
 
-      // Ignore messages sent by the bot itself
-      if (key.fromMe === true) {
-        console.log("Ignoring bot's own message.");
-        return;
-      }
-
       const message =
         eventData?.message ||
         eventData?.data?.message ||
         {};
 
-      // Get the sender
+      const text =
+        getMessageText(message);
+
+      // Allow commands from the connected WhatsApp account.
+      // This fixes the problem where Evolution marks your
+      // own messages as fromMe: true.
+      if (
+        key.fromMe === true &&
+        !text.startsWith(PREFIX)
+      ) {
+        console.log(
+          "Ignoring non-command message sent by bot account."
+        );
+        return;
+      }
+
+      // Get sender
       const remoteJid =
         key.senderPn ||
         key.remoteJid ||
@@ -643,9 +653,6 @@ app.post(
         .split(":")[0]
         .replace(/\D/g, "");
 
-      const text =
-        getMessageText(message);
-
       if (!text) {
         console.log("No text message found.");
         return;
@@ -655,7 +662,6 @@ app.post(
         `Incoming message from ${number}: ${text}`
       );
 
-      // Normalize owner number
       const normalizedOwner =
         String(OWNER_NUMBER)
           .replace(/\D/g, "");
