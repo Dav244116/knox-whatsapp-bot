@@ -1,5 +1,5 @@
 // KNOX BOT
-// 100 WORKING COMMANDS
+// 100 COMMANDS
 // Owner: Knox The Great
 // Owner Number: 2348155033420
 
@@ -26,7 +26,7 @@ const categories = {
 
   GROUP: [
     "groupinfo", "members", "admins", "tagall", "hidetag",
-    "groupid", "owner", "rules", "welcome", "goodbye"
+    "groupid", "rules", "welcome", "goodbye", "groupname"
   ],
 
   MEDIA: [
@@ -45,8 +45,8 @@ const categories = {
   ],
 
   SOCIAL: [
-    "goodmorning", "goodnight", "welcome", "thanks", "sorry",
-    "motivate", "advice", "factcheck", "statusmsg", "profile"
+    "goodmorning", "goodnight", "thanks", "sorry", "motivate",
+    "advice", "factcheck", "statusmsg", "profile", "greeting"
   ],
 
   EXTRA: [
@@ -55,124 +55,13 @@ const categories = {
   ]
 };
 
-const commands = {
-  // GENERAL
-  ping: "pong",
-  alive: "alive",
-  bot: "info",
-  info: "info",
-  owner: "owner",
-  uptime: "uptime",
-  status: "status",
-  commands: "menu",
-  help: "menu",
+const commands = {};
 
-  // FUN
-  joke: "joke",
-  quote: "quote",
-  fact: "fact",
-  truth: "truth",
-  dare: "dare",
-  roast: "roast",
-  ship: "ship",
-  love: "love",
-  laugh: "laugh",
-  compliment: "compliment",
-
-  // GAMES
-  dice: "dice",
-  coin: "coin",
-  rps: "rps",
-  number: "number",
-  guess: "guess",
-  "8ball": "8ball",
-  roll: "roll",
-  slot: "slot",
-  math: "math",
-  random: "random",
-
-  // UTILITY
-  time: "time",
-  date: "date",
-  calc: "calc",
-  count: "count",
-  reverse: "reverse",
-  upper: "upper",
-  lower: "lower",
-  length: "length",
-  echo: "echo",
-  choose: "choose",
-
-  // GROUP
-  groupinfo: "groupinfo",
-  members: "members",
-  admins: "admins",
-  tagall: "tagall",
-  hidetag: "hidetag",
-  groupid: "groupid",
-  rules: "rules",
-  welcome: "welcome",
-  goodbye: "goodbye",
-
-  // MEDIA
-  sticker: "sticker",
-  image: "image",
-  audio: "audio",
-  video: "video",
-  play: "play",
-  song: "song",
-  yt: "yt",
-  download: "download",
-  media: "media",
-  qr: "qr",
-
-  // TOOLS
-  uuid: "uuid",
-  password: "password",
-  base64: "base64",
-  unbase64: "unbase64",
-  json: "json",
-  binary: "binary",
-  unbinary: "unbinary",
-  hex: "hex",
-  unhex: "unhex",
-  timestamp: "timestamp",
-
-  // OWNER
-  broadcast: "owner",
-  restart: "owner",
-  setprefix: "owner",
-  botnumber: "botnumber",
-  config: "owner",
-  ownerinfo: "owner",
-  private: "owner",
-  public: "owner",
-  maintenance: "owner",
-  shutdown: "owner",
-
-  // SOCIAL
-  goodmorning: "goodmorning",
-  goodnight: "goodnight",
-  thanks: "thanks",
-  sorry: "sorry",
-  motivate: "motivate",
-  advice: "advice",
-  factcheck: "fact",
-  statusmsg: "statusmsg",
-  profile: "profile",
-
-  // EXTRA
-  menu2: "menu",
-  knox: "info",
-  great: "great",
-  version: "version",
-  support: "support",
-  report: "report",
-  feedback: "feedback",
-  donate: "donate",
-  link: "link",
-  connect: "connect"
-};
+for (const list of Object.values(categories)) {
+  for (const command of list) {
+    commands[command] = command;
+  }
+}
 
 module.exports = {
   categories,
