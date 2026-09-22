@@ -1,6 +1,6 @@
-// KNOX BOT - COMMANDS 101-200
+// KNOX BOT - COMMANDS300
 
-const commands101_200 = {
+const categories = {
 
   utility: [
     "calculate", "weather", "time", "date", "translate",
@@ -13,13 +13,13 @@ const commands101_200 = {
   ],
 
   search: [
-    "google", "wiki", "github", "npm", "youtube",
+    "google", "wikipedia", "github", "npm", "youtube",
     "image", "news", "lyrics", "define", "search"
   ],
 
   anime: [
-    "anime", "character", "animequote", "animesearch", "manga",
-    "waifu", "neko", "kitsune", "animewall", "animememe"
+    "anime", "character", "manga", "waifu", "neko",
+    "kitsune", "animequote", "animesearch", "animewall", "animememe"
   ],
 
   games: [
@@ -42,7 +42,7 @@ const commands101_200 = {
     "setprefix", "setowner", "setname", "setbio", "setstatus"
   ],
 
-  fun2: [
+  fun: [
     "ship", "rate", "roast", "compliment", "pick",
     "choose", "truth", "dare", "wouldyourather", "compatibility"
   ],
@@ -54,4 +54,6 @@ const commands101_200 = {
 
 };
 
-module.exports = commands101_200;
+const commands = Object.values(categories).flat();
+
+module.exports = { categories, commands };
