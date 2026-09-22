@@ -69,20 +69,18 @@ function randomItem(array) {
 // ==================================================
 
 async function sendText(number, text) {
-  if (!EVOLUTION_API_URL ||
-      !EVOLUTION_API_KEY ||
-      !EVOLUTION_INSTANCE) {
-
-    console.error("Evolution API variables are missing.");
-    return;
-  }
-
   try {
-    await axios.post(
-      `${EVOLUTION_API_URL}/message/sendText/${EVOLUTION_INSTANCE}`,
+    const baseUrl = EVOLUTION_API_URL.replace(/\/+$/, "");
+    const url = `${baseUrl}/message/sendText/${EVOLUTION_INSTANCE}`;
+
+    console.log("📤 Sending message to:", number);
+    console.log("🌐 Evolution URL:", url);
+
+    const response = await axios.post(
+      url,
       {
-        number,
-        text
+        number: number,
+        text: text
       },
       {
         headers: {
@@ -92,9 +90,13 @@ async function sendText(number, text) {
         timeout: 15000
       }
     );
+
+    console.log("✅ Message sent:", response.data);
+    return response.data;
+
   } catch (error) {
     console.error(
-      "Send text error:",
+      "❌ SEND TEXT ERROR:",
       error.response?.data || error.message
     );
   }
