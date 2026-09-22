@@ -1164,60 +1164,85 @@ app.post("/webhook/evolution", async (req, res) => {
   res.sendStatus(200);
 
   try {
-    const data = req.body;
+    const payload = req.body;
 
-    const messageData = data?.data;
-    const key = messageData?.key;
-    const message = messageData?.message;
+    console.log("📩 Evolution webhook received");
 
-    if (!key || !message) return;
+    const data = payload?.data || payload;
+
+    const key = data?.key || {};
+    const message = data?.message || {};
 
     // Ignore messages sent by the bot itself
-    if (key.fromMe) return;
+    if (key.fromMe) {
+      console.log("⏭️ Ignored bot's own message");
+      return;
+    }
 
-    const remoteJid = key.remoteJid;
+    // Get WhatsApp chat number
+    const remoteJid =
+      key.remoteJid ||
+      data?.remoteJid ||
+      "";
 
-    if (!remoteJid) return;
+    if (!remoteJid) {
+      console.log("❌ No remoteJid found");
+      return;
+    }
 
     const number = cleanNumber(remoteJid);
 
+    // Read text from different WhatsApp message types
     const text =
       message.conversation ||
       message.extendedTextMessage?.text ||
       message.imageMessage?.caption ||
       message.videoMessage?.caption ||
+      message.buttonsResponseMessage?.selectedButtonId ||
+      message.listResponseMessage?.singleSelectReply?.selectedRowId ||
+      message.templateButtonReplyMessage?.selectedId ||
       "";
 
-    if (!text) return;
+    console.log("📱 Message detected");
+    console.log("📝 Text:", text);
 
-    if (!text.startsWith(PREFIX)) return;
+    if (!text) {
+      console.log("⏭️ No text found");
+      return;
+    }
 
-    const parts = text
+    const cleanText = String(text).trim();
+
+    if (!cleanText.startsWith(PREFIX)) {
+      console.log("⏭️ Not a bot command");
+      return;
+    }
+
+    const parts = cleanText
       .slice(PREFIX.length)
       .trim()
       .split(/\s+/);
 
     const command = parts.shift()?.toLowerCase();
-
     const args = parts;
 
     if (!command) return;
 
     console.log(
-      `Command: ${PREFIX}${command} | From: ${number}`
+      `🔥 Command: ${PREFIX}${command} | From: ${number}`
     );
 
     await handleCommand(
       number,
       command,
       args,
-      text,
-      messageData
+      cleanText,
+      data
     );
 
   } catch (error) {
     console.error(
-      "Webhook error:",
+      "❌ Webhook error:",
       error.response?.data || error.message
     );
   }
