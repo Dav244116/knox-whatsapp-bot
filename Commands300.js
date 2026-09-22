@@ -1,422 +1,57 @@
-// KNOX BOT - 300 COMMANDS
-// 30 categories × 10 commands = 300 commands
+// KNOX BOT - COMMANDS 101-200
 
-const categories = {
-  general: [
-    "menu",
-    "help",
-    "ping",
-    "alive",
-    "bot",
-    "info",
-    "owner",
-    "uptime",
-    "status",
-    "commands"
+const commands101_200 = {
+
+  utility: [
+    "calculate", "weather", "time", "date", "translate",
+    "shortlink", "qr", "barcode", "reminder", "timer"
   ],
 
-  fun: [
-    "joke",
-    "meme",
-    "quote",
-    "fact",
-    "truth",
-    "dare",
-    "riddle",
-    "8ball",
-    "compliment",
-    "roast"
-  ],
-
-  games: [
-    "game",
-    "dice",
-    "coinflip",
-    "guess",
-    "quiz",
-    "tictactoe",
-    "slots",
-    "numbergame",
-    "wordgame",
-    "trivia"
-  ],
-
-  group: [
-    "groupinfo",
-    "grouplink",
-    "groupid",
-    "admins",
-    "members",
-    "tagall",
-    "hidetag",
-    "tagadmins",
-    "groupstats",
-    "welcome"
-  ],
-
-  admin: [
-    "kick",
-    "add",
-    "promote",
-    "demote",
-    "mute",
-    "unmute",
-    "warn",
-    "warnings",
-    "resetwarn",
-    "adminlist"
-  ],
-
-  moderation: [
-    "antilink",
-    "antispam",
-    "antibot",
-    "antiflood",
-    "antitag",
-    "antinsult",
-    "antidelete",
-    "autoread",
-    "autotyping",
-    "modsettings"
-  ],
-
-  media: [
-    "sticker",
-    "toimage",
-    "tovideo",
-    "toaudio",
-    "mp3",
-    "mp4",
-    "gif",
-    "voice",
-    "photo",
-    "media"
-  ],
-
-  download: [
-    "ytmp3",
-    "ytmp4",
-    "youtube",
-    "tiktok",
-    "instagram",
-    "facebook",
-    "twitter",
-    "mediafire",
-    "gdrive",
-    "download"
+  downloader: [
+    "ytmp3", "ytmp4", "play", "song", "video",
+    "tiktok", "instagram", "facebook", "twitter", "mediafire"
   ],
 
   search: [
-    "google",
-    "wikipedia",
-    "image",
-    "news",
-    "weather",
-    "lyrics",
-    "github",
-    "npm",
-    "translate",
-    "search"
-  ],
-
-  ai: [
-    "ai",
-    "ask",
-    "chat",
-    "imagine",
-    "summarize",
-    "rewrite",
-    "explain",
-    "translateai",
-    "codeai",
-    "aichat"
-  ],
-
-  utility: [
-    "calc",
-    "shortlink",
-    "qr",
-    "readqr",
-    "timer",
-    "stopwatch",
-    "reminder",
-    "date",
-    "time",
-    "convert"
-  ],
-
-  tools: [
-    "base64",
-    "decode",
-    "encode",
-    "hash",
-    "md5",
-    "sha256",
-    "uuid",
-    "password",
-    "binary",
-    "json"
-  ],
-
-  text: [
-    "uppercase",
-    "lowercase",
-    "reverse",
-    "bold",
-    "italic",
-    "underline",
-    "strike",
-    "tiny",
-    "bubble",
-    "fancy"
-  ],
-
-  funtext: [
-    "say",
-    "repeat",
-    "mock",
-    "clap",
-    "ship",
-    "love",
-    "hate",
-    "rate",
-    "choose",
-    "pick"
-  ],
-
-  reactions: [
-    "hug",
-    "kiss",
-    "slap",
-    "pat",
-    "poke",
-    "wave",
-    "smile",
-    "laugh",
-    "cry",
-    "angry"
+    "google", "wiki", "github", "npm", "youtube",
+    "image", "news", "lyrics", "define", "search"
   ],
 
   anime: [
-    "anime",
-    "waifu",
-    "neko",
-    "manga",
-    "naruto",
-    "onepiece",
-    "dragonball",
-    "bleach",
-    "jujutsu",
-    "demon"
+    "anime", "character", "animequote", "animesearch", "manga",
+    "waifu", "neko", "kitsune", "animewall", "animememe"
   ],
 
-  wallpapers: [
-    "wallpaper",
-    "animewall",
-    "naturewall",
-    "carwall",
-    "gamingwall",
-    "darkwall",
-    "amwall",
-    "pmwall",
-    "phonewall",
-    "randomwall"
+  games: [
+    "8ball", "dice", "coinflip", "rps", "guess",
+    "quiz", "trivia", "slots", "tictactoe", "hangman"
   ],
 
-  images: [
-    "imagegen",
-    "searchimage",
-    "logo",
-    "avatar",
-    "banner",
-    "profile",
-    "cover",
-    "thumbnail",
-    "editimage",
-    "enhance"
+  group: [
+    "add", "kick", "promote", "demote", "mute",
+    "unmute", "tagall", "hidetag", "groupinfo", "groupname"
   ],
 
-  stickers: [
-    "stickerpack",
-    "steal",
-    "take",
-    "stickerinfo",
-    "stickers",
-    "emoji",
-    "emojimix",
-    "stickersearch",
-    "stickerlist",
-    "randomsticker"
-  ],
-
-  music: [
-    "song",
-    "music",
-    "play",
-    "pause",
-    "resume",
-    "skip",
-    "volume",
-    "nowplaying",
-    "playlist",
-    "lyrics"
-  ],
-
-  status: [
-    "status",
-    "statusview",
-    "statussave",
-    "statusreply",
-    "statusreact",
-    "statusmention",
-    "statuslist",
-    "statusdownload",
-    "statusinfo",
-    "statushelp"
+  admin: [
+    "ban", "unban", "warn", "warnings", "clearwarn",
+    "antilink", "antispam", "welcome", "goodbye", "lock"
   ],
 
   owner: [
-    "owner",
-    "creator",
-    "contactowner",
-    "broadcast",
-    "restart",
-    "shutdown",
-    "update",
-    "setprefix",
-    "setname",
-    "setbio"
+    "broadcast", "restart", "shutdown", "eval", "exec",
+    "setprefix", "setowner", "setname", "setbio", "setstatus"
   ],
 
-  bot: [
-    "botinfo",
-    "botname",
-    "botversion",
-    "botmode",
-    "botprefix",
-    "botstatus",
-    "botstats",
-    "botping",
-    "botuptime",
-    "bothelp"
+  fun2: [
+    "ship", "rate", "roast", "compliment", "pick",
+    "choose", "truth", "dare", "wouldyourather", "compatibility"
   ],
 
-  security: [
-    "security",
-    "block",
-    "unblock",
-    "blocklist",
-    "privacy",
-    "antidelete",
-    "protect",
-    "lock",
-    "unlock",
-    "securityinfo"
-  ],
-
-  profile: [
-    "profile",
-    "avatar",
-    "bio",
-    "setbio",
-    "setavatar",
-    "userinfo",
-    "number",
-    "jid",
-    "username",
-    "profileinfo"
-  ],
-
-  funcommands: [
-    "shipme",
-    "couple",
-    "match",
-    "compatibility",
-    "friendship",
-    "bestie",
-    "crush",
-    "lovecheck",
-    "luck",
-    "fortune"
-  ],
-
-  games2: [
-    "blackjack",
-    "hangman",
-    "rps",
-    "connect4",
-    "memory",
-    "mathgame",
-    "typing",
-    "reaction",
-    "fastanswer",
-    "challenge"
-  ],
-
-  information: [
-    "country",
-    "capital",
-    "currency",
-    "population",
-    "timezone",
-    "language",
-    "continent",
-    "internet",
-    "phonecode",
-    "postcode"
-  ],
-
-  education: [
-    "define",
-    "meaning",
-    "dictionary",
-    "grammar",
-    "spell",
-    "math",
-    "science",
-    "history",
-    "geography",
-    "study"
-  ],
-
-  developer: [
-    "github",
-    "git",
-    "npm",
-    "node",
-    "javascript",
-    "html",
-    "css",
-    "python",
-    "api",
-    "developer"
-  ],
-
-  extras: [
-    "random",
-    "choose",
-    "yesno",
-    "truthbomb",
-    "factcheck",
-    "daily",
-    "motivate",
-    "advice",
-    "tip",
-    "secret"
+  tools: [
+    "sticker", "toimg", "tovideo", "tourl", "removebg",
+    "enhance", "blur", "crop", "resize", "rotate"
   ]
+
 };
 
-// Create a flat list containing all commands
-const commands = {};
-
-for (const [category, list] of Object.entries(categories)) {
-  for (const command of list) {
-    commands[command] = category;
-  }
-}
-
-// Export everything for use in index.js
-module.exports = {
-  categories,
-  commands
-};
+module.exports = commands101_200;
