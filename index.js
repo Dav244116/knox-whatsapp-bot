@@ -1,8 +1,8 @@
 const express = require("express");
 const axios = require("axios");
 
-const general = require("./commands/general");
-const fun = require("./commands/fun");
+const { commands, categories, total } = require("./commands/commands300");
+
 const app = express();
 app.use(express.json());
 
@@ -17,7 +17,11 @@ app.get("/", (req, res) => {
 });
 
 app.get("/health", (req, res) => {
-  res.json({ status: "ok" });
+  res.json({
+    status: "ok",
+    bot: "Knox WhatsApp Bot",
+    commands: total
+  });
 });
 
 async function sendMessage(number, text) {
@@ -36,6 +40,30 @@ async function sendMessage(number, text) {
   );
 }
 
+function randomItem(array) {
+  return array[Math.floor(Math.random() * array.length)];
+}
+
+function buildMenu() {
+  let menu = `╭━━━〔 👑 KNOX BOT 〕━━━╮
+┃
+┃ ⚡ ${total} COMMANDS AVAILABLE
+┃`;
+
+  for (const [category, list] of Object.entries(categories)) {
+    menu += `\n┃ 🔹 ${category.toUpperCase()}\n`;
+
+    for (const command of list) {
+      menu += `┃ • .${command}\n`;
+    }
+  }
+
+  menu += `┃
+╰━━━━━━━━━━━━━━━━━━━━╯`;
+
+  return menu;
+}
+
 app.post("/webhook/evolution", async (req, res) => {
   res.sendStatus(200);
 
@@ -46,9 +74,12 @@ app.post("/webhook/evolution", async (req, res) => {
     const key = data?.data?.key;
 
     if (!message || !key) return;
+
+    // Ignore messages sent by the bot itself
     if (key.fromMe) return;
 
     const number = key.remoteJid?.replace("@s.whatsapp.net", "");
+
     if (!number) return;
 
     const text =
@@ -56,72 +87,205 @@ app.post("/webhook/evolution", async (req, res) => {
       message.extendedTextMessage?.text ||
       "";
 
-    const command = text.trim().toLowerCase();
+    const input = text.trim();
 
-    if (command === ".ping") {
-      await sendMessage(number, general.ping);
+    if (!input.startsWith(".")) return;
+
+    const parts = input.split(/\s+/);
+
+    const commandName = parts[0]
+      .slice(1)
+      .toLowerCase();
+
+    const args = parts.slice(1);
+
+    // MENU
+    if (commandName === "menu" || commandName === "help") {
+      await sendMessage(number, buildMenu());
+      return;
     }
 
-    else if (command === ".alive") {
-      await sendMessage(number, general.alive);
+    // DICE
+    if (commandName === "dice") {
+      const roll = Math.floor(Math.random() * 6) + 1;
+
+      await sendMessage(
+        number,
+        `🎲 You rolled: ${roll}`
+      );
+
+      return;
     }
 
-    else if (command === ".help") {
-      await sendMessage(number, general.help);
+    // COINFLIP
+    if (commandName === "coinflip") {
+      await sendMessage(
+        number,
+        Math.random() < 0.5
+          ? "🪙 Heads!"
+          : "🪙 Tails!"
+      );
+
+      return;
     }
 
-    else if (command === ".owner") {
-      await sendMessage(number, general.owner);
+    // RANDOM
+    if (commandName === "random") {
+      await sendMessage(
+        number,
+        `🎲 Random number: ${Math.floor(Math.random() * 100) + 1}`
+      );
+
+      return;
     }
 
-    else if (command === ".botinfo") {
-      await sendMessage(number, general.botinfo);
+    // CHOOSE
+    if (commandName === "choose") {
+      if (args.length < 2) {
+        await sendMessage(
+          number,
+          "🎯 Example:\n.choose football gaming"
+        );
+        return;
+      }
+
+      await sendMessage(
+        number,
+        `🎯 I choose: ${randomItem(args)}`
+      );
+
+      return;
     }
 
-    else if (command === ".menu") {
-      await sendMessage(number, general.menu);
+    // NUMBER
+    if (commandName === "number") {
+      const min = Number(args[0]);
+      const max = Number(args[1]);
+
+      if (
+        !Number.isFinite(min) ||
+        !Number.isFinite(max) ||
+        min > max
+      ) {
+        await sendMessage(
+          number,
+          "🔢 Example:\n.number 1 100"
+        );
+        return;
+      }
+
+      const result =
+        Math.floor(Math.random() * (max - min + 1)) + min;
+
+      await sendMessage(
+        number,
+        `🔢 Your number is: ${result}`
+      );
+
+      return;
     }
-else if (command === ".joke") {
-  await sendMessage(number, fun.joke);
-}
 
-else if (command === ".fact") {
-  await sendMessage(number, fun.fact);
-}
+    // SAY / REPEAT
+    if (
+      commandName === "say" ||
+      commandName === "repeat"
+    ) {
+      if (!args.length) {
+        await sendMessage(
+          number,
+          "✍️ Example:\n.say Hello everyone!"
+        );
+        return;
+      }
 
-else if (command === ".quote") {
-  await sendMessage(number, fun.quote);
-}
+      await sendMessage(
+        number,
+        args.join(" ")
+      );
 
-else if (command === ".8ball") {
-  await sendMessage(number, fun.eightball);
-}
+      return;
+    }
 
-else if (command === ".dice") {
-  await sendMessage(
-    number,
-    `🎲 You rolled: ${Math.floor(Math.random() * 6) + 1}`
-  );
-}
+    // CALCULATOR
+    if (commandName === "calc") {
+      const expression = args.join(" ");
 
-else if (command === ".coinflip") {
-  await sendMessage(
-    number,
-    Math.random() < 0.5 ? "🪙 Heads!" : "🪙 Tails!"
-  );
-}
+      if (
+        !expression ||
+        !/^[0-9+\-*/().%\s]+$/.test(expression)
+      ) {
+        await sendMessage(
+          number,
+          "🧮 Example:\n.calc 25*4"
+        );
+        return;
+      }
 
-else if (command === ".rps") {
-  await sendMessage(number, fun.rps);
-}
+      try {
+        const result = Function(
+          `"use strict"; return (${expression})`
+        )();
 
-else if (command === ".truth") {
-  await sendMessage(number, fun.truth);
-}
+        await sendMessage(
+          number,
+          `🧮 Answer: ${result}`
+        );
+      } catch {
+        await sendMessage(
+          number,
+          "❌ Invalid calculation."
+        );
+      }
 
-else if (command === ".dare") {
-  await sendMessage(number, fun.dare);
-}
+      return;
+    }
+
+    // TIME
+    if (commandName === "time") {
+      await sendMessage(
+        number,
+        `🕐 Server time: ${new Date().toLocaleTimeString()}`
+      );
+
+      return;
+    }
+
+    // DATE
+    if (commandName === "date") {
+      await sendMessage(
+        number,
+        `📅 Server date: ${new Date().toLocaleDateString()}`
+      );
+
+      return;
+    }
+
+    // ID
+    if (commandName === "id") {
+      await sendMessage(
+        number,
+        `🆔 Your WhatsApp ID:\n${number}`
+      );
+
+      return;
+    }
+
+    // UNKNOWN COMMAND
+    if (!commands[commandName]) {
+      await sendMessage(
+        number,
+        `❌ Unknown command: .${commandName}\n\nType .menu to see all ${total} commands.`
+      );
+
+      return;
+    }
+
+    // NORMAL COMMAND
+    await sendMessage(
+      number,
+      commands[commandName].response
+    );
+
   } catch (error) {
     console.error(
       "Bot error:",
@@ -131,5 +295,7 @@ else if (command === ".dare") {
 });
 
 app.listen(PORT, () => {
-  console.log(`Knox Bot running on port ${PORT}`);
+  console.log(
+    `Knox Bot running on port ${PORT} with ${total} commands`
+  );
 });
