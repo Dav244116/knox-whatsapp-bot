@@ -1036,4 +1036,241 @@ Commands: 100`
     return;
   }
 
-  if
+    if (command === "advice") {
+    await sendText(
+      number,
+      "💡 Advice: Stay consistent, respect people, and keep learning."
+    );
+    return;
+  }
+
+  if (command === "factcheck") {
+    await sendText(
+      number,
+      "🔎 Send the statement you want KNOX BOT to fact-check."
+    );
+    return;
+  }
+
+  if (command === "statusmsg") {
+    await sendText(
+      number,
+      "🟢 KNOX BOT is online and running normally."
+    );
+    return;
+  }
+
+  if (command === "profile") {
+    await sendText(
+      number,
+      `👤 PROFILE
+
+Number:
+${number}
+
+Bot:
+KNOX BOT`
+    );
+    return;
+  }
+
+  // ---------------- EXTRA ----------------
+
+  if (command === "great") {
+    await sendText(
+      number,
+      "👑 KNOX THE GREAT!"
+    );
+    return;
+  }
+
+  if (command === "version") {
+    await sendText(
+      number,
+      "🤖 KNOX BOT v1.0.0"
+    );
+    return;
+  }
+
+  if (command === "support") {
+    await sendText(
+      number,
+      `🛠️ KNOX BOT SUPPORT
+
+Owner:
+https://wa.me/${OWNER_NUMBER}`
+    );
+    return;
+  }
+
+  if (command === "report") {
+    await sendText(
+      number,
+      `📩 To report a problem, contact:
+https://wa.me/${OWNER_NUMBER}`
+    );
+    return;
+  }
+
+  if (command === "feedback") {
+    await sendText(
+      number,
+      `💬 Send your feedback to:
+https://wa.me/${OWNER_NUMBER}`
+    );
+    return;
+  }
+
+  if (command === "donate") {
+    await sendText(
+      number,
+      "❤️ Thanks for supporting KNOX BOT."
+    );
+    return;
+  }
+
+  if (command === "link" || command === "connect") {
+    let text = `🔗 KNOX BOT CONNECTION
+
+👑 Owner:
+https://wa.me/${OWNER_NUMBER}`;
+
+    if (BOT_NUMBER) {
+      text += `\n\n🤖 Bot:
+https://wa.me/${BOT_NUMBER}`;
+    }
+
+    await sendText(number, text);
+    return;
+  }
+
+  // ---------------- UNKNOWN COMMAND ----------------
+
+  await sendText(
+    number,
+    `❌ Unknown command: ${PREFIX}${command}
+
+Type ${PREFIX}menu to see all commands.`
+  );
+}
+
+// ==================================================
+// WEBHOOK
+// ==================================================
+
+app.post("/webhook/evolution", async (req, res) => {
+  res.sendStatus(200);
+
+  try {
+    const data = req.body;
+
+    const messageData = data?.data;
+    const key = messageData?.key;
+    const message = messageData?.message;
+
+    if (!key || !message) return;
+
+    // Ignore messages sent by the bot itself
+    if (key.fromMe) return;
+
+    const remoteJid = key.remoteJid;
+
+    if (!remoteJid) return;
+
+    const number = cleanNumber(remoteJid);
+
+    const text =
+      message.conversation ||
+      message.extendedTextMessage?.text ||
+      message.imageMessage?.caption ||
+      message.videoMessage?.caption ||
+      "";
+
+    if (!text) return;
+
+    if (!text.startsWith(PREFIX)) return;
+
+    const parts = text
+      .slice(PREFIX.length)
+      .trim()
+      .split(/\s+/);
+
+    const command = parts.shift()?.toLowerCase();
+
+    const args = parts;
+
+    if (!command) return;
+
+    console.log(
+      `Command: ${PREFIX}${command} | From: ${number}`
+    );
+
+    await handleCommand(
+      number,
+      command,
+      args,
+      text,
+      messageData
+    );
+
+  } catch (error) {
+    console.error(
+      "Webhook error:",
+      error.response?.data || error.message
+    );
+  }
+});
+
+// ==================================================
+// HOME
+// ==================================================
+
+app.get("/", (req, res) => {
+  res.send(`
+    <h1>👑 KNOX BOT</h1>
+    <p>🟢 Bot is running.</p>
+    <p>Owner: ${OWNER_NAME}</p>
+    <p>Prefix: ${PREFIX}</p>
+  `);
+});
+
+// ==================================================
+// HEALTH CHECK
+// ==================================================
+
+app.get("/health", (req, res) => {
+  res.json({
+    status: "ok",
+    bot: "KNOX BOT",
+    owner: OWNER_NAME,
+    commands: 100,
+    uptime: formatUptime(Date.now() - START_TIME)
+  });
+});
+
+// ==================================================
+// CONNECT
+// ==================================================
+
+app.get("/connect", (req, res) => {
+  res.json({
+    owner: `https://wa.me/${OWNER_NUMBER}`,
+    bot: BOT_NUMBER
+      ? `https://wa.me/${BOT_NUMBER}`
+      : "BOT_NUMBER not configured"
+  });
+});
+
+// ==================================================
+// START SERVER
+// ==================================================
+
+app.listen(PORT, () => {
+  console.log("=================================");
+  console.log("👑 KNOX BOT");
+  console.log("🟢 Server started successfully");
+  console.log(`🚀 Port: ${PORT}`);
+  console.log(`⚡ Prefix: ${PREFIX}`);
+  console.log(`👑 Owner: ${OWNER_NAME}`);
+  console.log("=================================");
+});
